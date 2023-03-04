@@ -1,13 +1,17 @@
 import React from 'react'
 
-const button = ({children, primary, className} : {}) => {
-  const primaryClasses = primary ? "bg-blue-500" : ""
-  const classes = `rounded px-6 py-4 ${primaryClasses} ${className}`
+const Button = ({children, primary, className, onClick} : {}) => {
+  const primaryClasses = primary ? "bg-blue-500 text-white" : "bg-blue-50"
+  const classes = `rounded-lg px-6 py-4 border-4 border-blue-500 font-medium ${primaryClasses} ${className}`
   return (
-    <button className={classes}>
+    <button className={classes} onClick={onClick}>
       {children}
     </button>
   )
 }
 
-export default button
+Button.defaultProps = {
+  primary: false
+}
+
+export default Button

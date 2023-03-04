@@ -1,6 +1,7 @@
 import { useState } from 'react'
+import { Dialog } from '@headlessui/react'
 
-import {Sidebar} from './components'
+import {Sidebar, Main} from './components'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -11,7 +12,7 @@ function App() {
         <Sidebar />
       </div>
       <div className="w-3/4 bg-blue-100 h-screen">
-
+        <Main />
       </div>
     </div>
   )
