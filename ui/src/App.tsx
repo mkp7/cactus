@@ -8,10 +8,10 @@ function App() {
 
   return (
     <div className="flex">
-      <div className="w-1/4 bg-red-100 h-screen">
+      <div className="w-1/4 bg-slate-200 h-screen">
         <Sidebar />
       </div>
-      <div className="w-3/4 bg-blue-100 h-screen">
+      <div className="w-3/4 bg-slate-50 h-screen">
         <Main />
       </div>
     </div>

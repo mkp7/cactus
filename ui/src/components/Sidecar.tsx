@@ -41,7 +41,7 @@ const Modal: FC<ModalProps> = ({
         <div className="fixed inset-0 overflow-y-auto">
           <div className="flex h-screen">
             <div className="ml-auto flex items-start justify-end">
-              <button onClick={onClose} className="p-2 pl-3 rounded-l mt-5 bg-gray-400">
+              <button onClick={onClose} className="p-2 pl-3 rounded-l mt-5 bg-gray-300">
                 <Close size={20} />
               </button>
               <Transition.Child
