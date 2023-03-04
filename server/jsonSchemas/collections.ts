@@ -1,7 +1,7 @@
 const Ajv = require("ajv")
 const ajv = new Ajv()
 
-const jsonSchema = {
+const collectionSchema = {
     type: "object",
     properties: {
         name: { type: "string" },
@@ -26,4 +26,4 @@ const jsonSchema = {
     additionalProperties: false
 }
 
-export default jsonSchema
+export default collectionSchema
