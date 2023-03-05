@@ -32,55 +32,64 @@ const NewCollection = (props : {}) => {
     control,
     name: "schema"
   });
+
+  const handleFormSumbit = (data) => {
+      console.log({data})
+    }
 	
   return (
 			<div className="px-4 py-8">
-				<form autoComplete="on" onSubmit={(e) => {e.preventDefault()}} className='flex flex-col items-center'>
+				<form autoComplete="on" onSubmit={handleSubmit(handleFormSumbit)} className='flex flex-col items-center'>
 					<table className='w-full'>
-						<tr className='flex'>
-							<th className='grow'>Name</th>
-							<th className='grow'>Type</th>
-							<th className='w-36'>Required?</th>
-							<th>Unique?</th>
-						</tr>
-							{fields.map((item, index) => (
-								<tr key={index} className='flex space-x-2 justify-between'>
-									<td>
-										<Controller
-											render={({ field }) => <input className='grow' {...field} />}
-											name={`schema.${index}.name`}
-											control={control}
-										/>
-											</td>
-											<td>
-											<Controller
-											render={({ field }) => (
-												<select className='grow w-48' {...field}>
-                          <option value='text'>Text</option>
-                          <option value='number'>Number</option>
-                          <option value='boolean'>Boolean</option>
-                        </select>
-											)}
-											name={`schema.${index}.type`}
-											control={control}
-										/>
-											</td>
-											<td>
-											<Controller
-												render={({ field }) => <input 	type="checkbox" className='w-36' {...field} />}
-												name={`schema.${index}.required`}
-												control={control}
-											/>
-											</td>
-											<td>
-											<Controller
-												render={({ field }) => <input 	type="checkbox" className='' {...field} />}
-												name={`schema.${index}.unique`}
-												control={control}
-											/>
-											</td>
-									</tr>
-								))}
+          <thead>
+            <tr className='flex'>
+            <th className='grow'>Name</th>
+            <th className='grow'>Type</th>
+            <th className='w-36'>Required?</th>
+            <th>Unique?</th>
+            <th></th>
+          </tr>
+          </thead>
+            <tbody>
+            {fields.map((item, index) => (
+                  <tr key={index} className='flex space-x-2 justify-between'>
+                  <td>
+                  <Controller
+                  render={({ field }) => <input className='grow' {...field} />}
+                  name={`schema.${index}.name`}
+                  control={control}
+                  />
+                  </td>
+                  <td>
+                  <Controller
+                  render={({ field }) => (
+                      <select className='grow w-48' {...field}>
+                      <option value='text'>Text</option>
+                      <option value='number'>Number</option>
+                      <option value='boolean'>Boolean</option>
+                      </select>
+                      )}
+                  name={`schema.${index}.type`}
+                  control={control}
+                  />
+                    </td>
+                    <td>
+                    <Controller
+                    render={({ field }) => <input   type="checkbox" className='w-36' {...field} />}
+                  name={`schema.${index}.required`}
+                  control={control}
+                  />
+                    </td>
+                    <td>
+                    <Controller
+                    render={({ field }) => <input   type="checkbox" className='' {...field} />}
+                  name={`schema.${index}.unique`}
+                  control={control}
+                  />
+                    </td>
+                    </tr>
+                    ))}
+            </tbody>
 					</table>
 					<Button
 						type="button"
@@ -88,6 +97,13 @@ const NewCollection = (props : {}) => {
 						onClick={() => append({ firstName: "bill", lastName: "luo" })}
 					>
 						Add Field
+					</Button>
+					<Button
+						type="submit"
+            primary
+						classname="mx-auto"
+					>
+						Create Collection
 					</Button>
         </form>
 			</div>
