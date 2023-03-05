@@ -24,8 +24,8 @@ const schema = yup.object().shape({
 	}).required())
 })
 
-const Input = React.forwardRef((props, ref) => (
-    <input ref={ref} {...props} className="px-3 py-2 bg-gray-200 rounded" />
+const Input = React.forwardRef(({type, name, className, onChange}, ref) => (
+    <input ref={ref} type={type} name={name} onChange={onChange} className={ `px-3 py-2 bg-gray-200 rounded ${className}`  }/>
   ))
 
 const NewCollection = (props : {}) => {
@@ -45,7 +45,7 @@ const NewCollection = (props : {}) => {
 			<div className="px-4 py-8">
 				<form autoComplete="on" onSubmit={handleSubmit(handleFormSumbit)} className='flex flex-col items-center'>
           <label htmlFor="name" className="block w-full mb-5 flex items-center space-x-2">
-          <span>Collection Name: </span>
+          <span className="shrink-0">Collection Name: </span>
           <Controller 
           render={({field}) => <Input type="text" name="name" className="w-full" {...register(`name`)} control={control} />}
                   name={`name`}
@@ -56,10 +56,10 @@ const NewCollection = (props : {}) => {
 					<table className='w-full'>
           <thead>
             <tr className='flex'>
-            <th className='grow'>Name</th>
-            <th className='grow'>Type</th>
-            <th className='w-36'>Required?</th>
-            <th>Unique?</th>
+            <th className='w-48'>Name</th>
+            <th className='w-48'>Type</th>
+            <th className='w-28'>Required?</th>
+            <th className="w-28">Unique?</th>
             <th></th>
           </tr>
           </thead>
@@ -68,7 +68,7 @@ const NewCollection = (props : {}) => {
                   <tr key={index} className='flex space-x-2 justify-between items-center'>
                   <td>
                   <Controller
-                  render={({ field }) => <Input className='grow' {...field} />}
+                  render={({ field }) => <Input className='w-48' {...field} />}
                   name={`schema.${index}.name`}
                   control={control}
                   />
@@ -76,7 +76,7 @@ const NewCollection = (props : {}) => {
                   <td>
                   <Controller
                   render={({ field }) => (
-                      <select className='grow w-48' {...field}>
+                      <select className='px-3 py-2 bg-gray-200 rounded w-48' {...field}>
                       <option value='text'>Text</option>
                       <option value='number'>Number</option>
                       <option value='boolean'>Boolean</option>
@@ -88,14 +88,14 @@ const NewCollection = (props : {}) => {
                     </td>
                     <td>
                     <Controller
-                    render={({ field }) => <Input type="checkbox" className='w-36' {...field} />}
+                    render={({ field }) => <Input type="checkbox" className='w-28' {...field} />}
                     name={`schema.${index}.required`}
                     control={control}
                     />
                       </td>
                       <td>
                     <Controller
-                    render={({ field }) => <Input type="checkbox" className='w-36' {...field} />}
+                    render={({ field }) => <Input type="checkbox" className='w-28' {...field} />}
                     name={`schema.${index}.unique`}
                     control={control}
                     />
