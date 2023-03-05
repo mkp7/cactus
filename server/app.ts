@@ -1,8 +1,16 @@
-import express, { Express, Request, Response } from 'express'
+import express, { Express, Request, Response, response } from 'express'
 import dotenv from 'dotenv'
 import initDb from './initDb'
-import { createCollection, createCollectionTable, fetchCollections } from './models/collections'
+import {
+  createCollection,
+  createCollectionTable,
+  fetchCollections,
+  getAllEntityData,
+  createEntityRecord,
+  getSchemaForEntity,
+} from './models/collections'
 import collectionSchema from './jsonSchemas/collections'
+import createJsonSchema from './jsonSchemas/createJsonSchema'
 import Ajv from 'ajv'
 import cors from 'cors'
 import { createId } from '@paralleldrive/cuid2'
@@ -37,11 +45,9 @@ app.get('/collections', async (req: Request, res: Response) => {
     }
 
     return res.json({ message: 'ok', data: result })
-		// console.log({result});
-		
   } catch (error) {
-		console.log(error);
-		
+    console.log(error)
+
     return res.status(500).json({
       message: 'server error',
     })
@@ -52,7 +58,6 @@ app.post('/collections', async (req: Request, res: Response) => {
   const id = createId()
   const isCollectionValid = validateCollection(req.body)
   if (!isCollectionValid) {
-    console.log('invalid')
     return res.status(400).json({
       message: 'bad data',
     })
@@ -61,7 +66,6 @@ app.post('/collections', async (req: Request, res: Response) => {
   try {
     let result: any = await createCollection({ id, ...req.body })
     if (result.error) {
-    console.log('error')
       return res.status(400).json({
         message: 'bad data',
       })
@@ -80,6 +84,37 @@ app.post('/collections', async (req: Request, res: Response) => {
       message: 'server error',
     })
   }
+})
+
+app.get('/api/:entity', async (request: Request, response: Response) => {
+  getAllEntityData(request.params.entity)
+    .then((data) => {
+      console.log('getting data', data)
+      response.json({ data })
+    })
+    .catch((error) => {
+      console.log('error in getting the data')
+    })
+})
+
+app.post('/api/:entity', async (request: Request, response: Response) => {
+  const columns = await getSchemaForEntity(entity)
+  const columnsSchema = JSON.parse(columns[0].schema)
+  console.log(columnsSchema)
+
+  const columnsJsonschema = createJsonSchema(columnsSchema)
+
+  const validate = ajv.compile(columnsJsonschema)
+  const valid = validate(entityObject)
+
+  if (!valid) {
+    console.log(validate.errors)
+    return response.status(400).json({ errors: validate.errors })
+  }
+
+  createEntityRecord(request.params.entity, request.body)
+
+  return response.json({ message: 'ok' })
 })
 
 app.listen(port, () => {
