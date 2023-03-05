@@ -52,6 +52,7 @@ app.post('/collections', async (req: Request, res: Response) => {
   const id = createId()
   const isCollectionValid = validateCollection(req.body)
   if (!isCollectionValid) {
+    console.log('invalid')
     return res.status(400).json({
       message: 'bad data',
     })
@@ -60,6 +61,7 @@ app.post('/collections', async (req: Request, res: Response) => {
   try {
     let result: any = await createCollection({ id, ...req.body })
     if (result.error) {
+    console.log('error')
       return res.status(400).json({
         message: 'bad data',
       })

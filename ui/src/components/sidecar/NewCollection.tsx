@@ -3,6 +3,7 @@ import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Button } from '../../elements'
 import * as yup from 'yup'
+import axios from '../../axios'
 
 const schema = yup.object().shape({
   name: yup
@@ -42,10 +43,14 @@ const NewCollection = (props : {}) => {
   });
 
   const handleFormSumbit = (data) => {
-      console.log({data})
+    console.log(data)
+      axios.post('/collections', data).then(res => {
+          console.log({res})
+        }).catch(err => {
+            console.log({err})
+          })
     }
-    console.log({errors})
-	
+
   return (
 			<div className="px-4 py-8">
 				<form autoComplete="on" onSubmit={handleSubmit(handleFormSumbit)} className='flex flex-col items-center'>
@@ -86,7 +91,7 @@ const NewCollection = (props : {}) => {
                          <select className='px-3 py-2 bg-gray-200 rounded w-48' {...field}>
                          <option value='text'>Text</option>
                          <option value='number'>Number</option>
-                         <option value='boolean'>Boolean</option>
+                         <option value='bool'>Boolean</option>
                          </select>
                          )}
                      name={`schema.${index}.type`}
