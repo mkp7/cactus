@@ -3,6 +3,11 @@ import classnames from 'classnames'
 import { Dialog, Transition } from '@headlessui/react'
 import {AiOutlineCloseSquare as Close} from 'react-icons/ai'
 
+import useStore from '../store'
+import { SideCar } from '../types'
+import NewCollection from './sidecar/NewCollection'
+import API from './sidecar/API'
+
 interface ModalProps {
   children: React.ReactNode
   initialFocusRef?: React.MutableRefObject<null>
@@ -18,6 +23,8 @@ const Modal: FC<ModalProps> = ({
   className,
   initialFocusRef,
 }) => {
+  const {sidecarContent} = useStore(state => state)
+
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog
@@ -65,7 +72,10 @@ shadow-xl shadow-lg bg-slate-100 transform rounded-l-md transition-all`,
 
                   style={{minWidth: "45vw"}}
                   >
-                    {children}
+										{{
+											[SideCar.NEW_COLLECTION]: <NewCollection />,
+											[SideCar.API]: <API />,
+										}[sidecarContent]}
                   </div>
                 </Dialog.Panel>
               </Transition.Child>
