@@ -20,7 +20,7 @@ function App() {
   return (
 		<>
     <div className="flex">
-      <div className="w-1/4 bg-slate-200 h-screen" style={{minWidth: 240}}>
+      <div className="w-1/4 bg-slate-100 h-screen border-r-2 border-gray-400" style={{minWidth: 240}}>
         <Sidebar />
       </div>
       <div className="w-full bg-slate-50 h-screen">

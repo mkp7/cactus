@@ -4,6 +4,7 @@ import initDb from './initDb'
 import { createCollection, createCollectionTable, fetchCollections } from './models/collections'
 import collectionSchema from './jsonSchemas/collections'
 import Ajv from 'ajv'
+import cors from 'cors'
 import { createId } from '@paralleldrive/cuid2'
 const ajv = new Ajv()
 
@@ -16,6 +17,15 @@ app.use(express.json())
 const port = process.env.PORT || 3000
 
 const validateCollection = ajv.compile(collectionSchema)
+
+const whiteList = ['http://localhost:5173']
+app.use(
+  cors({
+    origin: whiteList,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD'],
+    credentials: true,
+  })
+)
 
 app.get('/collections', async (req: Request, res: Response) => {
   try {
