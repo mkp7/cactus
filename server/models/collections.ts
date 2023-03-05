@@ -17,6 +17,18 @@ export async function createCollection(collection: any) {
   })
 }
 
+export async function fetchCollections() {
+  const statement = 'SELECT id, name from _collections;'
+  return new Promise((resolve, reject) => {
+    db.all(
+      statement,
+      (err, result) => {
+        err ? reject(err) : resolve(result)
+      }
+    )
+  })
+}
+
 const fieldTypesMap = {
   text: 'TEXT',
   number: 'INT',
