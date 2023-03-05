@@ -5,8 +5,6 @@ import { Button } from '../../elements'
 import * as yup from 'yup'
 
 const schema = yup.object().shape({
-  space_id: yup.number().required(),
-  creator_id: yup.number().required(),
   name: yup
     .string()
     .trim()
@@ -25,12 +23,18 @@ const schema = yup.object().shape({
 })
 
 const Input = React.forwardRef(({type, name, className, onChange}, ref) => (
-    <input ref={ref} type={type} name={name} onChange={onChange} className={ `px-3 py-2 bg-gray-200 rounded ${className}`  }/>
+    <input ref={ref} type={type} name={name} onChange={onChange} className={ `px-3 py-2 bg-gray-200 rounded mb-2 ${className}`  }/>
   ))
 
+const Error = ({children}) => {
+  if(!children)  return null
+    return <p className="text-red-500">{children}</p>
+  }
+
 const NewCollection = (props : {}) => {
-	const { register, control, handleSubmit, reset, trigger, setError } = useForm({
-    // defaultValues: {}; you can populate the fields by this attribute 
+	const { register, control, handleSubmit, reset, trigger, setError, formState: {errors} } = useForm({
+    resolver: yupResolver(schema),
+    mode: 'onBlur',
   });
 	const { fields, append, remove } = useFieldArray({
     control,
@@ -40,20 +44,21 @@ const NewCollection = (props : {}) => {
   const handleFormSumbit = (data) => {
       console.log({data})
     }
+    console.log({errors})
 	
   return (
 			<div className="px-4 py-8">
 				<form autoComplete="on" onSubmit={handleSubmit(handleFormSumbit)} className='flex flex-col items-center'>
-          <label htmlFor="name" className="block w-full mb-5 flex items-center space-x-2">
+          <label htmlFor="name" className="block w-full flex items-center space-x-2">
           <span className="shrink-0">Collection Name: </span>
           <Controller 
           render={({field}) => <Input type="text" name="name" className="w-full" {...register(`name`)} control={control} />}
                   name={`name`}
                   control={control}
           />
-          
           </label>
-					<table className='w-full'>
+          <Error>{errors.name?.message}</Error>
+					<table className='w-full mt-5'>
           <thead>
             <tr className='flex'>
             <th className='w-48'>Name</th>
@@ -64,53 +69,66 @@ const NewCollection = (props : {}) => {
           </tr>
           </thead>
             <tbody>
-            {fields.map((item, index) => (
-                  <tr key={index} className='flex space-x-2 justify-between items-center'>
-                  <td>
-                  <Controller
-                  render={({ field }) => <Input className='w-48' {...field} />}
-                  name={`schema.${index}.name`}
-                  control={control}
-                  />
-                  </td>
-                  <td>
-                  <Controller
-                  render={({ field }) => (
-                      <select className='px-3 py-2 bg-gray-200 rounded w-48' {...field}>
-                      <option value='text'>Text</option>
-                      <option value='number'>Number</option>
-                      <option value='boolean'>Boolean</option>
-                      </select>
-                      )}
-                  name={`schema.${index}.type`}
-                  control={control}
-                  />
-                    </td>
-                    <td>
-                    <Controller
-                    render={({ field }) => <Input type="checkbox" className='w-28' {...field} />}
-                    name={`schema.${index}.required`}
-                    control={control}
-                    />
-                      </td>
-                      <td>
-                    <Controller
-                    render={({ field }) => <Input type="checkbox" className='w-28' {...field} />}
-                    name={`schema.${index}.unique`}
-                    control={control}
-                    />
-                    </td>
-                    <td>
-                      <button type="button" onClick={() => remove(index)}>Delete</button>
-                    </td>
-                    </tr>
-                    ))}
+            {fields.map((item, index) => {
+                 return (
+                     <>
+                     <tr key={index} className='flex space-x-2 justify-between items-center'>
+                     <td>
+                     <Controller
+                     render={({ field }) => <Input className='w-48' {...field} />}
+                     name={`schema.${index}.name`}
+                     control={control}
+                     />
+                     </td>
+                     <td>
+                     <Controller
+                     render={({ field }) => (
+                         <select className='px-3 py-2 bg-gray-200 rounded w-48' {...field}>
+                         <option value='text'>Text</option>
+                         <option value='number'>Number</option>
+                         <option value='boolean'>Boolean</option>
+                         </select>
+                         )}
+                     name={`schema.${index}.type`}
+                     control={control}
+                     />
+                       </td>
+                       <td>
+                       <Controller
+                       render={({ field }) => <Input type="checkbox" className='w-28' {...field} />}
+                     name={`schema.${index}.required`}
+                     control={control}
+                     />
+                       </td>
+                       <td>
+                       <Controller
+                       render={({ field }) => <Input type="checkbox" className='w-28' {...field} />}
+                     name={`schema.${index}.unique`}
+                     control={control}
+                     />
+                       </td>
+                       <td>
+                       <button type="button" onClick={() => remove(index)}>Delete</button>
+                       </td>
+                       </tr>
+                       {( errors.schema && errors.schema[index] ) ? (
+                           <tr>
+                           <Error>Name required</Error>
+                           </tr>
+                           ) : null}
+                     </>
+                    )
+
+              })}
             </tbody>
 					</table>
 					<Button
 						type="button"
 						classname="mx-auto"
-						onClick={() => append({ name: "", type: "text", required: false, unique: false })}
+						onClick={(e) => {
+              e.preventDefault();
+              append({ name: "", type: "text", required: false, unique: false }) }
+              }
 					>
 						Add Field
 					</Button>
