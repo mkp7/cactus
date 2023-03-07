@@ -1,9 +1,5 @@
-import { resolve } from 'path'
 import db from '../db'
-import Ajv from 'ajv'
 import { createId } from '@paralleldrive/cuid2'
-import createJsonSchema from '../jsonSchemas/createJsonSchema'
-const ajv = new Ajv()
 
 export async function createCollection(collection: any) {
   const statement = db.prepare(
@@ -82,12 +78,12 @@ export async function createEntityRecord(entity: any, entityObject: any) {
     )
     .map((s) => s.join(', '))
 
-  const id = `"${createId()}"`
+  const id = createId()
 
   const query = `INSERT INTO "${entity}" (
 		id,
     ${subquery[0]}
-		) VALUES ( ${id} , ${subquery[1]});`
+		) VALUES ( "${id}" , ${subquery[1]});`
 
   console.log('subquery', query)
 
@@ -96,7 +92,7 @@ export async function createEntityRecord(entity: any, entityObject: any) {
       if (result !== null && result.errno) {
         resolve({ error: 'client error' })
       }
-      err ? reject(err) : resolve(true)
+      err ? reject(err) : resolve(id)
     })
   })
 }

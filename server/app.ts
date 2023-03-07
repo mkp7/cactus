@@ -1,4 +1,4 @@
-import express, { Express, Request, Response, response } from 'express'
+import express, { Express, Request, Response } from 'express'
 import dotenv from 'dotenv'
 import initDb from './initDb'
 import {
@@ -78,8 +78,9 @@ app.post('/collections', async (req: Request, res: Response) => {
       })
     }
 
-    return res.json({ message: 'ok' })
+    return res.json({ id })
   } catch (error) {
+    console.log(error)
     return res.status(500).json({
       message: 'server error',
     })
@@ -87,34 +88,43 @@ app.post('/collections', async (req: Request, res: Response) => {
 })
 
 app.get('/api/:entity', async (request: Request, response: Response) => {
-  getAllEntityData(request.params.entity)
-    .then((data) => {
-      console.log('getting data', data)
-      response.json({ data })
+  try {
+    const data = await getAllEntityData(request.params['entity'])
+    response.json({ data })
+  } catch (error) {
+    return response.status(500).json({
+      message: 'server error',
     })
-    .catch((error) => {
-      console.log('error in getting the data')
-    })
+  }
 })
 
 app.post('/api/:entity', async (request: Request, response: Response) => {
-  const columns = await getSchemaForEntity(entity)
-  const columnsSchema = JSON.parse(columns[0].schema)
-  console.log(columnsSchema)
+  const entity = request.params['entity']
+  const entityObject = request.body
 
-  const columnsJsonschema = createJsonSchema(columnsSchema)
+  try {
+    const columns = await getSchemaForEntity(entity)
+    const columnsSchema = JSON.parse(columns[0].schema)
 
-  const validate = ajv.compile(columnsJsonschema)
-  const valid = validate(entityObject)
+    const columnsJsonschema = createJsonSchema(columnsSchema)
 
-  if (!valid) {
-    console.log(validate.errors)
-    return response.status(400).json({ errors: validate.errors })
+    const validate = ajv.compile(columnsJsonschema)
+    const valid = validate(entityObject)
+
+    if (!valid) {
+      console.log(validate.errors)
+      return response.status(400).json({ errors: validate.errors })
+    }
+
+    const id = await createEntityRecord(entity, entityObject)
+
+    return response.json({ id })
+  } catch (error) {
+    console.log(error)
+    return response.status(500).json({
+      message: 'server error',
+    })
   }
-
-  createEntityRecord(request.params.entity, request.body)
-
-  return response.json({ message: 'ok' })
 })
 
 app.listen(port, () => {
